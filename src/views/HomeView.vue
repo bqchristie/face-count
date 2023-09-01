@@ -1,4 +1,26 @@
-<script setup></script>
+<script>
+import io from 'socket.io-client'
+
+export default {
+  data() {
+    return {
+      socket: null,
+      messages: [],
+      messageInput: ''
+    }
+  },
+  mounted() {
+    // Connect to the S}ocket.IO server
+    this.socket = io('http://localhost:3000')
+    // Listen for incoming messages
+    this.socket.on('create-request', (message) => {
+      // eslint-disable-next-line no-debugger
+      debugger
+      console.log(message)
+    })
+  }
+}
+</script>
 
 <template>
   <main>
