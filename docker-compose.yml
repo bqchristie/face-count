@@ -1,0 +1,18 @@
+version: '3'
+services:
+#  vue-app:
+#    build:
+#      context: .
+#    ports:
+#      - '8080:80'
+#    depends_on:
+#      - api
+#  api:
+#    build:
+#      context: ../face-count-api
+#    ports:
+#      - '3000:3000'
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
