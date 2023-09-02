@@ -3,7 +3,7 @@
   <div class="modal">
     <div class="modal-content">
       <slot></slot>
-      <button @click="closeModal">Close</button>
+      <!--      <button @click="closeModal">Close</button>-->
     </div>
   </div>
 </template>
