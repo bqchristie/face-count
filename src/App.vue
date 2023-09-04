@@ -1,5 +1,7 @@
+<!--This ends up being unnecessary, but we can keep it. The fun starts in Main.vue.-->
+
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
