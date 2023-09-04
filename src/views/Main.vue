@@ -106,4 +106,14 @@ export default {
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-weight: normal;
+}
+</style>

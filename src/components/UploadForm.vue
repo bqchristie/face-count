@@ -1,12 +1,10 @@
 <template>
   <div class="input-area">
     <h2>Submit an image for processing:</h2>
-    <div>
-      <div>
-        <input type="file" @change="uploadFile" ref="file" />
-        <input type="text" v-model="name" placeholder="enter a name " />
-        <button @click="onClickSubmitFile">Upload!</button>
-      </div>
+    <div class="form">
+      <input type="file" @change="uploadFile" ref="file" />
+      <input type="text" v-model="name" placeholder="enter a name " />
+      <button @click="onClickSubmitFile">Upload!</button>
     </div>
   </div>
 </template>
@@ -27,3 +25,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>

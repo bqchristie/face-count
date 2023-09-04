@@ -26,3 +26,14 @@ export default {
   }
 }
 </script>
+<style scoped>
+header {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1280px;
+  margin: auto;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-top: 2em;
+}
+</style>
