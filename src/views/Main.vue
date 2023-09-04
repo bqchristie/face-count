@@ -24,6 +24,7 @@ export default {
     return {
       username: null,
       isAuthenticated: false,
+      isNameUnique: false,
       user: null,
       socket: null,
       requests: [],
@@ -63,6 +64,10 @@ export default {
         res.status // HTTP status
       })
     },
+    async checkNameUnique(name) {
+      const response = await axios.get(`${REQUEST_URL}?name=${name}`, this.config)
+      this.isNameUnique = response.data.length === 0
+    },
     initSocket() {
       this.socket = io(BASE_URL)
       this.socket.on('request-created', (request) => {
@@ -99,7 +104,11 @@ export default {
     <div v-if="isAuthenticated">
       <AppHeader :is-authenticated="isAuthenticated" :user="user" @logout="logout" />
       <div class="app">
-        <UploadForm @submit-file="submitFile" />
+        <UploadForm
+          @submit-file="submitFile"
+          :is-name-unique="isNameUnique"
+          @validate-name="checkNameUnique"
+        />
         <RequestData @delete-request="deleteRequest" :requests="requests" />
       </div>
     </div>
