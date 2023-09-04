@@ -22,12 +22,12 @@
           <td>{{ request.name }}</td>
           <td class="status">
             {{ request.Status.toUpperCase() }}
-            <span v-if="request.Status !== 'complete'" class="material-symbols-outlined incomplete">
+            <div v-if="request.Status !== 'complete'" class="material-symbols-outlined incomplete">
               sync
-            </span>
-            <span v-if="request.Status === 'complete'" class="material-symbols-outlined complete">
+            </div>
+            <div v-if="request.Status === 'complete'" class="material-symbols-outlined complete">
               check
-            </span>
+            </div>
           </td>
           <td>{{ request.createdAt }}</td>
           <td>{{ request.updatedAt || '-' }}</td>
@@ -60,3 +60,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+td.status {
+  display: flex;
+  width: 150px;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

@@ -16,10 +16,10 @@ th {
 }
 
 td.status {
-    width: 125px;
+    width: 150px;
 }
 
-span.incomplete {
+div.incomplete {
     animation-name: rotate;
     animation-duration: 5s;
     animation-iteration-count: infinite;
@@ -28,7 +28,7 @@ span.incomplete {
     font-size: 1.2em;
 }
 
-span.complete {
+div.complete {
     color: seagreen;
 }
 
