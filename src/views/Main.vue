@@ -52,7 +52,6 @@ export default {
     },
     async deleteRequest(id) {
       await axios.delete(`${REQUEST_URL}/${id}`, this.config)
-      this.requests = this.requests.filter((obj) => obj.id !== id)
     },
     async submitFile(Images) {
       const formData = new FormData()
@@ -74,6 +73,9 @@ export default {
         if (idx !== -1) {
           this.requests[idx] = request
         }
+      })
+      this.socket.on('request-deleted', (request) => {
+        this.requests = this.requests.filter((obj) => obj.id !== request.id)
       })
       this.socket.on('session-invalid', () => {
         this.isAuthenticated = false
