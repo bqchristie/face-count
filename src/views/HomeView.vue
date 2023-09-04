@@ -2,10 +2,22 @@
 import io from 'socket.io-client'
 import Modal from '@/components/Modal.vue'
 import axios from 'axios'
+import AppHeader from '@/components/AppHeader.vue'
+import LoginForm from '@/components/LoginForm.vue'
+import UploadForm from '@/components/UploadForm.vue'
+import RequestData from '@/components/RequestData.vue'
 
-const LOGIN_URL = 'http://localhost:3000/api/v1/auth/login'
+const BASE_URL = `http://localhost:3000`
+const API_BASE_URL = `${BASE_URL}/api/v1`
+const LOGIN_URL = `${API_BASE_URL}/auth/login`
+const REQUEST_URL = `${API_BASE_URL}/request`
+
 export default {
   components: {
+    RequestData,
+    UploadForm,
+    LoginForm,
+    AppHeader,
     Modal
   },
   data() {
@@ -19,8 +31,8 @@ export default {
     }
   },
   mounted() {
-    // Connect to the S}ocket.IO server
-    this.socket = io('http://localhost:3000')
+    // Connect to the Socket.IO server
+    this.socket = io(BASE_URL)
     // Listen for incoming messages
     this.socket.on('request-created', (request) => {
       this.requests.push(request)
@@ -37,19 +49,14 @@ export default {
       console.log(request)
     })
     this.socket.on('session-invalid', () => {
-      // eslint-disable-next-line no-debugger
       this.isAuthenticated = false
     })
   },
-  computed: {
-    empty() {
-      return !this.requests || this.requests.length === 0
-    }
-  },
+
   methods: {
-    async login() {
+    async login(username) {
       const payload = {
-        username: this.username
+        username
       }
       const response = await axios.post(LOGIN_URL, payload)
       this.user = response.data.user
@@ -62,27 +69,23 @@ export default {
       await this.loadRequests()
     },
     async loadRequests() {
-      const response = await axios.get('http://localhost:3000/api/v1/request', this.config)
+      const response = await axios.get(REQUEST_URL, this.config)
       this.requests = response.data
     },
 
     async deleteRequest(id) {
-      await axios.delete(`http://localhost:3000/api/v1/request/${id}`, this.config)
+      await axios.delete(`${REQUEST_URL}/${id}`, this.config)
       this.requests = this.requests.filter((obj) => obj.id !== id)
     },
-
-    uploadFile() {
-      this.Images = this.$refs.file.files[0]
-    },
-    submitFile() {
+    submitFile(Images) {
       const formData = new FormData()
-      formData.append('image', this.Images)
-      formData.append('name', this.Images.name)
+      formData.append('image', Images)
+      formData.append('name', Images.name)
       const headers = {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${this.user.token}`
       }
-      axios.post('http://localhost:3000/api/v1/request', formData, { headers }).then((res) => {
+      axios.post(REQUEST_URL, formData, { headers }).then((res) => {
         res.data.files // binary representation of the file
         res.status // HTTP status
       })
@@ -100,84 +103,13 @@ export default {
 <template>
   <main>
     <Modal v-if="!isAuthenticated">
-      <h1>Facecount Login</h1>
-      <div class="login">
-        <label for="username">Username</label>
-        <input name="username" v-model="username" type="text" />
-        <button type="submit" @click="login()">Login</button>
-      </div>
+      <LoginForm @login="login" />
     </Modal>
     <div v-if="isAuthenticated">
-      <header>
-        <div>
-          <h1>Facecount</h1>
-          <h3 v-if="isAuthenticated">Welcome, {{ user.username }}</h3>
-        </div>
-        <div>
-          <a @click="logout()" class="logout-button">
-            <div class="material-symbols-outlined">logout</div>
-            <div>Logout</div>
-          </a>
-        </div>
-      </header>
+      <AppHeader :is-authenticated="isAuthenticated" :user="user" @logout="logout" />
       <div class="app">
-        <div class="input-area">
-          <h2>Submit an image for processing:</h2>
-          <div>
-            <div>
-              <input type="file" @change="uploadFile" ref="file" />
-              <button @click="submitFile">Upload!</button>
-            </div>
-          </div>
-        </div>
-        <div class="data-area">
-          <h2>Your Requests:</h2>
-          <div v-if="empty">
-            <p>No requests yet.</p>
-          </div>
-          <table v-if="!empty">
-            <thead>
-              <tr>
-                <th>id</th>
-                <th>name</th>
-                <th>status</th>
-                <th>created</th>
-                <th>updated</th>
-                <th>Face Count</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="request in requests" :key="request.id">
-                <td>{{ request.id }}</td>
-                <td>{{ request.name }}</td>
-                <td class="status">
-                  {{ request.Status.toUpperCase() }}
-                  <span
-                    v-if="request.Status !== 'complete'"
-                    class="material-symbols-outlined incomplete"
-                  >
-                    sync
-                  </span>
-                  <span
-                    v-if="request.Status === 'complete'"
-                    class="material-symbols-outlined complete"
-                  >
-                    check
-                  </span>
-                </td>
-                <td>{{ request.createdAt }}</td>
-                <td>{{ request.updatedAt || '-' }}</td>
-                <td class="number">{{ request.faceCount || '-' }}</td>
-                <td>
-                  <a href="#" @click="deleteRequest(request.id)"
-                    ><span class="material-symbols-outlined"> delete </span></a
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <UploadForm @submit-file="submitFile" />
+        <RequestData @delete-request="deleteRequest" :requests="requests" />
       </div>
     </div>
   </main>
