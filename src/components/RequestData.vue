@@ -55,7 +55,6 @@ export default {
   },
   methods: {
     onClickDeleteRequest(id) {
-      debugger
       this.$emit('delete-request', id)
     }
   }
