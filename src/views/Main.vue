@@ -6,6 +6,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import LoginForm from '@/components/LoginForm.vue'
 import UploadForm from '@/components/UploadForm.vue'
 import RequestData from '@/components/RequestData.vue'
+import RequestSummary from '@/components/RequestSummary.vue'
 
 const BASE_URL = `http://localhost:3000`
 const API_BASE_URL = `${BASE_URL}/api/v1`
@@ -14,6 +15,7 @@ const REQUEST_URL = `${API_BASE_URL}/request`
 
 export default {
   components: {
+    RequestSummary,
     RequestData,
     UploadForm,
     LoginForm,
@@ -55,7 +57,6 @@ export default {
       await axios.delete(`${REQUEST_URL}/${id}`, this.config)
     },
     async submitFile(data) {
-      debugger
       const { image, name } = data
       const formData = new FormData()
       formData.append('image', image)
@@ -106,13 +107,16 @@ export default {
     </Modal>
     <div v-if="isAuthenticated">
       <AppHeader :is-authenticated="isAuthenticated" :user="user" @logout="logout" />
-      <div class="app">
+      <div class="app" v-if="!user.isAdmin">
         <UploadForm
           @submit-file="submitFile"
           :is-name-unique="isNameUnique"
           @validate-name="checkNameUnique"
         />
         <RequestData @delete-request="deleteRequest" :requests="requests" />
+      </div>
+      <div class="app" v-if="user.isAdmin">
+        <RequestSummary :requests="requests" />
       </div>
     </div>
   </main>
