@@ -32,6 +32,10 @@ div.complete {
     color: seagreen;
 }
 
+div.failed {
+    color: darkred;
+}
+
 @keyframes rotate {
     from {
         transform: rotate(-360deg);

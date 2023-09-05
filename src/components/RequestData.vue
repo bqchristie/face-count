@@ -17,21 +17,39 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests" :key="request.id">
+        <tr
+          v-for="request in requests.map((request) => {
+            const expired = (request) => {
+              const timeElapsed = Date.now() - new Date(request.createdAt).getTime()
+              return timeElapsed > 60000
+            }
+            if (request.Status !== 'complete' && expired(request)) {
+              request.Status = 'failed'
+            }
+            return request
+          })"
+          :key="request.id"
+        >
           <td>{{ request.id }}</td>
           <td>{{ request.name }}</td>
           <td class="status">
             {{ request.Status.toUpperCase() }}
-            <div v-if="request.Status !== 'complete'" class="material-symbols-outlined incomplete">
+            <div
+              v-if="!['complete', 'failed'].includes(request.Status)"
+              class="material-symbols-outlined incomplete"
+            >
               sync
             </div>
             <div v-if="request.Status === 'complete'" class="material-symbols-outlined complete">
               check
             </div>
+            <div v-if="request.Status === 'failed'" class="material-symbols-outlined failed">
+              error
+            </div>
           </td>
           <td>{{ request.createdAt }}</td>
           <td>{{ request.updatedAt || '-' }}</td>
-          <td class="number">{{ request.faceCount || '-' }}</td>
+          <td class="number">{{ request.faceCount !== null ? request.faceCount : '-' }}</td>
           <td>
             <a href="#" @click="onClickDeleteRequest(request.id)"
               ><span class="material-symbols-outlined"> delete </span></a
