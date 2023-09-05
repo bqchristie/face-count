@@ -24,6 +24,7 @@ export default {
     return {
       username: null,
       isAuthenticated: false,
+      isNameUnique: false,
       user: null,
       socket: null,
       requests: [],
@@ -53,15 +54,22 @@ export default {
     async deleteRequest(id) {
       await axios.delete(`${REQUEST_URL}/${id}`, this.config)
     },
-    async submitFile(Images) {
+    async submitFile(data) {
+      debugger
+      const { image, name } = data
       const formData = new FormData()
-      formData.append('image', Images)
-      formData.append('name', Images.name)
+      formData.append('image', image)
+      formData.append('fileName', image.name)
+      formData.append('name', name)
       const headers = { ...this.config.headers, 'Content-Type': 'multipart/form-data' }
       axios.post(REQUEST_URL, formData, { headers }).then((res) => {
         res.data.files // binary representation of the file
         res.status // HTTP status
       })
+    },
+    async checkNameUnique(name) {
+      const response = await axios.get(`${REQUEST_URL}?name=${name}`, this.config)
+      this.isNameUnique = response.data.length === 0
     },
     initSocket() {
       this.socket = io(BASE_URL)
@@ -99,7 +107,11 @@ export default {
     <div v-if="isAuthenticated">
       <AppHeader :is-authenticated="isAuthenticated" :user="user" @logout="logout" />
       <div class="app">
-        <UploadForm @submit-file="submitFile" />
+        <UploadForm
+          @submit-file="submitFile"
+          :is-name-unique="isNameUnique"
+          @validate-name="checkNameUnique"
+        />
         <RequestData @delete-request="deleteRequest" :requests="requests" />
       </div>
     </div>

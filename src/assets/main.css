@@ -3,3 +3,13 @@
 @import './include/button.css';
 @import "./include/form.css";
 
+h1 {
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+h2 {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--vt-c-text-light-2);
+}
