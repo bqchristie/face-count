@@ -54,10 +54,13 @@ export default {
     async deleteRequest(id) {
       await axios.delete(`${REQUEST_URL}/${id}`, this.config)
     },
-    async submitFile(Images) {
+    async submitFile(data) {
+      debugger
+      const { image, name } = data
       const formData = new FormData()
-      formData.append('image', Images)
-      formData.append('name', Images.name)
+      formData.append('image', image)
+      formData.append('fileName', image.name)
+      formData.append('name', name)
       const headers = { ...this.config.headers, 'Content-Type': 'multipart/form-data' }
       axios.post(REQUEST_URL, formData, { headers }).then((res) => {
         res.data.files // binary representation of the file

@@ -14,14 +14,14 @@
         type="text"
         v-model="name"
         class="flex-me"
-        placeholder="enter a name "
+        placeholder="Enter a name "
         @keyup="validateName"
       />
-      <a href="#" @click="onClickSubmitFile">
+      <a href="#" @click="onClickSubmitFile" :disabled="!isValid">
         <span class="material-symbols-outlined"> cloud_upload </span>
       </a>
     </div>
-    <p>{{ validationMessage }}</p>
+    <p :class="validationState">{{ validationMessage }}</p>
   </div>
 </template>
 <script>
@@ -37,8 +37,15 @@ export default {
     }
   },
   computed: {
+    validationState() {
+      if (!this.name && !this.selectedFile) return 'empty'
+      if (!this.isNameUnique) return 'error'
+      if (!this.name) return 'warning'
+      if (!this.selectedFile) return 'warning'
+      return 'success'
+    },
     isValid() {
-      return this.name && this.isNameUnique && this.$refs?.file?.files[0]
+      return this.name && this.isNameUnique && this.$refs?.file?.files[0] !== undefined
     },
     validationMessage() {
       if (!this.name && !this.selectedFile) return 'To get started select an image for processing.'
@@ -55,7 +62,7 @@ export default {
     },
     onClickSubmitFile() {
       this.Images = this.$refs.file.files[0]
-      this.$emit('submit-file', this.Images)
+      this.$emit('submit-file', { image: this.Images, name: this.name })
       this.clear()
     },
     handleFileChange() {
@@ -63,6 +70,7 @@ export default {
       //Use the file name as the default name
       if (!this.name) {
         this.name = this.selectedFile.name
+        this.validateName()
       }
     },
     validateName() {
@@ -71,6 +79,11 @@ export default {
       this.debouncedCheck = setTimeout(() => {
         this.$emit('validate-name', this.name)
       }, 500)
+    },
+    watch: {
+      name() {
+        this.validateName()
+      }
     }
   }
 }
@@ -118,5 +131,26 @@ export default {
   justify-content: center;
   align-items: center;
   text-decoration: none;
+}
+
+.input-area a[disabled='true'] {
+  background-color: #ececec;
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+p.empty {
+  color: #0b58a4;
+}
+
+p.warning {
+  color: #b97a1a;
+}
+p.error {
+  color: #d0021b;
+}
+
+p.success {
+  color: #4a9109;
 }
 </style>
