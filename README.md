@@ -5,12 +5,31 @@ find that all the basic requirements are met but this is not production
 ready.  
 
 The idea was to get something working and then iterate.  For the 
-most part the code is organized in a way that should look faniliar and 
+most part the code is organized in a way that should look familiar and 
 be easy to follow.
+
+### Stack Details
+
+### Backend
+* Google Vision API 
+* Node
+* Express
+* SQLLite
+* Prisma
+* SocketIO 
+* Docker
+* Bull Queue (stubbed in)
+
+###  Frontend
+* Vue
+* Vite
+* SocketIO 
+* Client
+* Docker
+
 
 I welcome the opportunity to discuss this code with you and point out areas
 where I would like to improve it.  I would also like to hear your feedback
-
 
 To run both the frontend and backend, run the following command in the root directory:
  
